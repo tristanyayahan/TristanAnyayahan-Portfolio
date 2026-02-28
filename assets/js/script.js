@@ -226,18 +226,19 @@ function initHashNavigation() {
 
 // --- Auto-update hash while scrolling ---
 function initScrollSpyHash() {
-  const sections = document.querySelectorAll("section[id], footer[id]");
-  let currentSection = "";
-
+  const sections = document.querySelectorAll("section[id], footer[id], header");
+  
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const id = entry.target.id;
-          if (id && id !== currentSection) {
-            currentSection = id;
 
-            // Update hash WITHOUT jumping or adding history entries
+          if (id === "header" || !id) {
+            // At top → remove hash
+            history.replaceState(null, "", window.location.pathname);
+          } else {
+            // Scroll into other sections → update hash
             history.replaceState(null, "", `#${id}`);
           }
         }
