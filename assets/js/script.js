@@ -220,6 +220,35 @@ function initHashNavigation() {
   }
 }
 
+// --- Auto-update hash while scrolling ---
+function initScrollSpyHash() {
+  const sections = document.querySelectorAll("section[id], footer[id]");
+  let currentSection = "";
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          if (id && id !== currentSection) {
+            currentSection = id;
+
+            // Update hash WITHOUT jumping or adding history entries
+            history.replaceState(null, "", `#${id}`);
+          }
+        }
+      });
+    },
+    {
+      root: null,
+      rootMargin: "-40% 0px -55% 0px", // 👈 controls when section becomes "active"
+      threshold: 0
+    }
+  );
+
+  sections.forEach(section => observer.observe(section));
+}
+
 // --- Master Initialization ---
 document.addEventListener("DOMContentLoaded", async () => {
   await loadComponents();
@@ -228,4 +257,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initGlobalAlerts();
   initContactForm();
   initHashNavigation();
+  initScrollSpyHash();
 });
