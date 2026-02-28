@@ -52,6 +52,35 @@ async function loadComponents() {
   emailjs.init("Fi-OOBVIwwYITqjAC");
 }
 
+function initSmoothRouting() {
+  const links = document.querySelectorAll("a[data-section]");
+
+  links.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+
+      const sectionId = link.dataset.section;
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      // Update URL without reload
+      history.pushState(null, "", `/${sectionId}`);
+
+      // Smooth scroll
+      section.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  // Handle browser back/forward
+  window.addEventListener("popstate", () => {
+    const sectionId = location.pathname.replace("/", "") || "header";
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+}
+
 // --- Theme Toggle ---
 function initThemeToggle() {
   const toggleBtn = document.getElementById("themeToggle");
@@ -197,4 +226,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initModals();
   initGlobalAlerts();
   initContactForm();
+  initSmoothRouting();
 });
