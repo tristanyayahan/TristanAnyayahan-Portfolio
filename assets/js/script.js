@@ -190,44 +190,34 @@ function initContactForm() {
   }
 }
 
-// --- History API Routing ---
-function initSmoothRouting() {
-  const links = document.querySelectorAll("a[data-section]");
-
-  links.forEach(link => {
+// --- Smooth Hash Navigation ---
+function initHashNavigation() {
+  // Smooth scroll on click
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener("click", e => {
+      const targetId = link.getAttribute("href").substring(1);
+      const target = document.getElementById(targetId);
+      if (!target) return;
+
       e.preventDefault();
 
-      const sectionId = link.dataset.section;
-      const section = document.getElementById(sectionId);
-      if (!section) return;
+      // Update hash without jump
+      history.pushState(null, "", `#${targetId}`);
 
-      // Update URL without page reload
-      history.pushState(null, "", `/${sectionId}`);
-
-      // Smooth scroll
-      section.scrollIntoView({ behavior: "smooth" });
+      target.scrollIntoView({ behavior: "smooth" });
     });
   });
 
-  // Handle refresh, back, forward
-  const path = window.location.pathname.replace("/", "");
-  if (path) {
-    const section = document.getElementById(path);
-    if (section) {
+  // Handle direct load or refresh with hash
+  if (window.location.hash) {
+    const targetId = window.location.hash.substring(1);
+    const target = document.getElementById(targetId);
+    if (target) {
       setTimeout(() => {
-        section.scrollIntoView({ behavior: "smooth" });
+        target.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   }
-
-  window.addEventListener("popstate", () => {
-    const sectionId = location.pathname.replace("/", "") || "header";
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  });
 }
 
 // --- Master Initialization ---
@@ -237,5 +227,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initModals();
   initGlobalAlerts();
   initContactForm();
-  initSmoothRouting();
+  initHashNavigation();
 });
