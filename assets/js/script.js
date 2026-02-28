@@ -203,8 +203,12 @@ function initHashNavigation() {
 
       // Update hash without jump
       history.pushState(null, "", `#${targetId}`);
-
       target.scrollIntoView({ behavior: "smooth" });
+
+      // Immediate active state on click
+      document.querySelectorAll(".navbar .nav-link").forEach(l =>
+        l.classList.toggle("active", l === link)
+      );
     });
   });
 
@@ -249,6 +253,40 @@ function initScrollSpyHash() {
   sections.forEach(section => observer.observe(section));
 }
 
+// --- Active navbar highlight while scrolling ---
+function initNavbarScrollSpy() {
+  const sections = document.querySelectorAll("section[id], footer[id]");
+  const navLinks = document.querySelectorAll(".navbar .nav-link");
+
+  let currentActive = "";
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          if (!id || id === currentActive) return;
+
+          currentActive = id;
+
+          // Update active class
+          navLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            link.classList.toggle("active", href === `#${id}`);
+          });
+        }
+      });
+    },
+    {
+      root: null,
+      rootMargin: "-40% 0px -55% 0px", // same as hash observer
+      threshold: 0
+    }
+  );
+
+  sections.forEach(section => observer.observe(section));
+}
+
 // --- Master Initialization ---
 document.addEventListener("DOMContentLoaded", async () => {
   await loadComponents();
@@ -258,4 +296,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initContactForm();
   initHashNavigation();
   initScrollSpyHash();
+  initNavbarScrollSpy();
 });

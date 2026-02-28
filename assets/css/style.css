@@ -598,3 +598,20 @@ footer {
   height: auto;
   margin-bottom: 15px;
 }
+
+/* Active navbar link highlight */
+.navbar .nav-link.active {
+  color: #0d6efd !important;        /* Bootstrap primary */
+  font-weight: 600;
+  position: relative;
+}
+
+.navbar .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background-color: #0d6efd;
+}
