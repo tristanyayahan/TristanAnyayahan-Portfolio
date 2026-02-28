@@ -222,9 +222,9 @@ function initContactForm() {
 // --- Master Initialization ---
 document.addEventListener("DOMContentLoaded", async () => {
   await loadComponents();
+  initSmoothRouting();
   initThemeToggle();
   initModals();
   initGlobalAlerts();
   initContactForm();
-  initSmoothRouting();
 });
