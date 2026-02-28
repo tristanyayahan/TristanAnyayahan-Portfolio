@@ -52,35 +52,6 @@ async function loadComponents() {
   emailjs.init("Fi-OOBVIwwYITqjAC");
 }
 
-function initSmoothRouting() {
-  const links = document.querySelectorAll("a[data-section]");
-
-  links.forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-
-      const sectionId = link.dataset.section;
-      const section = document.getElementById(sectionId);
-      if (!section) return;
-
-      // Update URL without reload
-      history.pushState(null, "", `/${sectionId}`);
-
-      // Smooth scroll
-      section.scrollIntoView({ behavior: "smooth" });
-    });
-  });
-
-  // Handle browser back/forward
-  window.addEventListener("popstate", () => {
-    const sectionId = location.pathname.replace("/", "") || "header";
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  });
-}
-
 // --- Theme Toggle ---
 function initThemeToggle() {
   const toggleBtn = document.getElementById("themeToggle");
@@ -219,12 +190,52 @@ function initContactForm() {
   }
 }
 
+// --- History API Routing ---
+function initSmoothRouting() {
+  const links = document.querySelectorAll("a[data-section]");
+
+  links.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+
+      const sectionId = link.dataset.section;
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      // Update URL without page reload
+      history.pushState(null, "", `/${sectionId}`);
+
+      // Smooth scroll
+      section.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  // Handle refresh, back, forward
+  const path = window.location.pathname.replace("/", "");
+  if (path) {
+    const section = document.getElementById(path);
+    if (section) {
+      setTimeout(() => {
+        section.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }
+
+  window.addEventListener("popstate", () => {
+    const sectionId = location.pathname.replace("/", "") || "header";
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+}
+
 // --- Master Initialization ---
 document.addEventListener("DOMContentLoaded", async () => {
   await loadComponents();
-  initSmoothRouting();
   initThemeToggle();
   initModals();
   initGlobalAlerts();
   initContactForm();
+  initSmoothRouting();
 });
